@@ -1,0 +1,105 @@
+Question 1: Parse Tree and Leftmost Derivation
+
+Parse Tree:
+
+Statement
+  └── Assignment
+        ├── Identifier
+        │     └── A
+        ├── "="
+        └── Expression
+              └── Term
+                    ├── Term
+                    │     └── Identifier
+                    │           └── B
+                    └── "*"
+                    └── Factor
+                          └── "("
+                          └── Expression
+                                └── Term
+                                      ├── Term
+                                      │     └── Identifier
+                                      │           └── C
+                                      └── "*"
+                                      └── Factor
+                                            └── "("
+                                            └── Expression
+                                                  ├── Expression
+                                                  │     └── Identifier
+                                                  │           └── A
+                                                  └── "+"
+                                                  └── Term
+                                                        └── Identifier
+                                                              └── B
+                                            └── ")"
+                          └── ")"
+
+Leftmost Derivation:
+
+1. Statement → Assignment
+2. Assignment → Identifier = Expression
+3. Identifier → A
+   Now we have: A = Expression
+4. Expression → Term
+   Now we have: A = Term
+5. Term → Term * Factor
+   Now we have: A = Term * Factor
+6. Term → Identifier
+   Now we have: A = B * Factor
+7. Factor → ( Expression )
+   Now we have: A = B * ( Expression )
+8. Expression → Term
+   Now we have: A = B * ( Term )
+9. Term → Term * Factor
+   Now we have: A = B * ( Term * Factor )
+10. Term → Identifier
+    Now we have: A = B * ( C * Factor )
+11. Factor → ( Expression )
+    Now we have: A = B * ( C * ( Expression ) )
+12. Expression → Expression + Term
+    Now we have: A = B * ( C * ( Expression + Term ) )
+13. Expression → Identifier
+    Now we have: A = B * ( C * ( A + Term ) )
+14. Term → Identifier
+    Now we have: A = B * ( C * ( A + B ) )
+
+
+Question 2: Scope Concepts
+
+a. Static Scope:
+
+In static scope, the variable bindings are determined by the structure of the program.
+
+1. main calls foo(u = 42, w = 13). Inside foo, a new v is declared as v = x = 42.
+2. foo calls bar(add). Inside bar, a new u is declared as u = w = 17.
+3. bar calls add(69). Since add was defined in the global scope, it uses the global variables u and v:
+   u = v + u + z = 69 + 42 + 69 = 180.
+4. The global u is now 180, so the print statement outputs: 180.
+
+Result: 180
+
+b. Dynamic Scope with Deep Binding (with hint):
+
+In deep binding, the environment where the function is defined is captured, but foo's local v is involved in the sum.
+
+1. main calls foo(u = 42, w = 13). Inside foo, v = 42.
+2. foo calls bar(add). Inside bar, u = 17.
+3. bar calls add(69). Although add was defined in the global scope, foo's local v = 42 is used:
+   u = v + u + z = 42 + 17 + 69 = 126.
+4. The local u in bar is 126, but the global u remains unchanged at 42.
+5. print(u) in the main function prints the global u, which is now 126.
+
+Result: 126
+
+c. Dynamic Scope with Shallow Binding (with hint):
+
+In shallow binding, the environment where the function is called is captured, and foo's local v is involved in the sum.
+
+1. main calls foo(u = 42, w = 13). Inside foo, v = 42.
+2. foo calls bar(add). Inside bar, u = 17.
+3. bar calls add(69). The environment where add was called (bar) is used, so foo's local v = 42 is used:
+   u = v + u + z = 42 + 13 + 42 = 97.
+4. The local u in bar is 97, but the global u remains unchanged at 42.
+5. print(u) in the main function prints the global u, which is still 42.
+
+Result: 42
